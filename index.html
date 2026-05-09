@@ -84,6 +84,17 @@ function extractText(input) {
   return result;
 }
 
+function convert(input) {
+  const funTime1 = "&r&#ff0000F&r&#ff1400u&r&#ff2800n&r&#ff3c00T&r&#ff5000i&r&#ff5000m&r&#ff3c00e&r&#ff2800.&r&#ff1400m&r&#ff0000e&r";
+  const funTime2 = "&r&#ff6600F&r&#ff5100u&r&#ff3d00n&r&#ff2900T&r&#ff1500i&r&#ff1500m&r&#ff2900e&r&#ff3d00.&r&#ff5100m&r&#ff6600e&r";
+
+  if (input.trim() === funTime1 || input.trim() === funTime2) {
+    return "&6FeverTime.su";
+  }
+
+  return input; // если не совпало — ничего не трогаем
+}
+
 function convert() {
   let text = document.getElementById("input").value;
 
