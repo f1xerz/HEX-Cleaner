@@ -1,3 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MC HEX Cleaner</title>
+<style>
+  body {
+    margin: 0;
+    background: #0b0b0f;
+    color: white;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .box {
+    width: 100%;
+    max-width: 800px;
+    background: #18181b;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  textarea {
+    width: 100%;
+    height: 180px;
+    background: black;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+    resize: vertical;
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  button.copy {
+    background: #16a34a;
+  }
+  .label {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>MC HEX → Vanilla Color Cleaner</h2>
+
+  <textarea id="input" placeholder="Вставь YAML сюда..."></textarea>
+
+  <button onclick="convert()">Convert</button>
+
+  <div class="label">Result:</div>
+  <textarea id="out" readonly></textarea>
+
+  <button class="copy" onclick="copyText()">Copy result</button>
+</div>
+
 <script>
 const colors = [
   {code: "&0", rgb: [0,0,0]},
@@ -15,7 +86,7 @@ const colors = [
   {code: "&c", rgb: [255,85,85]},
   {code: "&d", rgb: [255,85,255]},
   {code: "&e", rgb: [255,255,85]},
-  {code: "&f", rgb: [255,255,255]},
+  {code: "&f", rgb: [255,255,255]}
 ];
 
 function hexToRgb(hex) {
@@ -48,13 +119,21 @@ function closestColor(r,g,b) {
 function convert() {
   let text = document.getElementById("input").value;
 
-  // заменяем HEX на &color + символ
-  text = text.replace(/&#([0-9a-fA-F]{6})(.)/g, (match, hex, char) => {
+  text = text.replace(/&#([0-9a-fA-F]{6})(.)/g, (m, hex, ch) => {
     const [r,g,b] = hexToRgb(hex);
     const color = closestColor(r,g,b);
-    return color + char;
+    return color + ch;
   });
 
-  document.getElementById("out").textContent = text;
+  document.getElementById("out").value = text;
+}
+
+function copyText() {
+  const out = document.getElementById("out");
+  out.select();
+  document.execCommand("copy");
 }
 </script>
+
+</body>
+</html>
