@@ -1,301 +1,281 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Minecraft Color Converter</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FeverConverter</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@400;700&display=swap');
-
-  :root {
-    --bg: #0d0f12;
-    --surface: #13161b;
-    --surface2: #1a1e25;
-    --border: #252932;
-    --accent: #ffaa00;
-    --accent2: #ff5555;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --green: #55ff55;
-    --radius: 8px;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --accent: #e03535;
+    --text: #d4d4d4;
+    --muted: #555;
+    --radius: 6px;
+  }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 48px 24px 32px;
   }
 
-  .noise {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 200px;
+  .top {
+    width: 100%; max-width: 860px;
+    margin-bottom: 28px;
+    text-align: center;
   }
 
-  header {
-    width: 100%; max-width: 1000px;
-    padding: 2.5rem 2rem 0;
-    position: relative; z-index: 1;
-  }
-
-  .logo {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 22px; font-weight: 700;
-    letter-spacing: -0.5px;
-    display: flex; align-items: center; gap: 10px;
-  }
-
-  .logo-icon {
-    width: 36px; height: 36px; border-radius: 6px;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-
-  .logo span { color: var(--accent); }
-
-  .tagline {
-    font-size: 11px; color: var(--muted); margin-top: 6px;
-    letter-spacing: 0.05em; text-transform: uppercase;
-  }
-
-  main {
-    width: 100%; max-width: 1000px;
-    padding: 2rem;
-    position: relative; z-index: 1;
-    flex: 1;
-  }
-
-  .badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(255,170,0,0.08);
-    border: 0.5px solid rgba(255,170,0,0.25);
+  h1 {
+    font-size: 22px; font-weight: 600;
     color: var(--accent);
-    font-size: 11px; padding: 4px 10px; border-radius: 99px;
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.04em;
+    letter-spacing: -0.01em;
+    text-align: center;
   }
-
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
   .editor-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
+    width: 100%; max-width: 860px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 12px;
   }
 
-  .panel {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .panel-header {
-    padding: 10px 14px;
-    border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface2);
-  }
+  .panel { display: flex; flex-direction: column; }
 
   .panel-label {
     font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.08em;
-    font-weight: 600;
+    margin-bottom: 5px; letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
-
-  .panel-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-in { background: #ff5555; }
-  .dot-out { background: #55ff55; }
 
   textarea {
-    width: 100%; height: 280px; resize: vertical;
-    background: transparent;
+    width: 100%; height: 260px; resize: vertical;
+    background: var(--surface);
     color: var(--text);
-    border: none; outline: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; line-height: 1.7;
-    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'Courier New', monospace;
+    font-size: 12px; line-height: 1.65;
+    padding: 12px; outline: none;
+    transition: border-color 0.15s;
   }
-
-  textarea::placeholder { color: var(--muted); }
-  textarea[readonly] { color: #a8ffa8; cursor: default; }
+  textarea:focus { border-color: #3a3a3a; }
+  textarea::placeholder { color: #3a3a3a; }
+  textarea[readonly] { color: #aaa; }
 
   .controls {
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    margin-bottom: 20px;
+    width: 100%; max-width: 860px;
+    display: flex; gap: 8px; align-items: center;
+    margin-bottom: 32px;
   }
 
-  .btn {
-    padding: 9px 20px; border-radius: var(--radius);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer; border: none;
-    transition: all 0.15s; letter-spacing: 0.02em;
-    display: flex; align-items: center; gap: 7px;
+  button {
+    padding: 7px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 500;
+    border-radius: var(--radius);
+    cursor: pointer; border: 1px solid var(--border);
+    transition: all 0.12s;
   }
 
-  .btn-primary {
-    background: var(--accent); color: #000;
+  .btn-run {
+    background: var(--accent); color: #fff; border-color: var(--accent);
   }
-  .btn-primary:hover { background: #ffbb22; transform: translateY(-1px); }
-  .btn-primary:active { transform: scale(0.97); }
+  .btn-run:hover { background: #c42d2d; }
 
-  .btn-ghost {
-    background: var(--surface2);
-    color: var(--text);
-    border: 0.5px solid var(--border);
+  .btn-copy, .btn-clear {
+    background: var(--surface); color: var(--muted);
   }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-copy:hover, .btn-clear:hover { color: var(--text); border-color: #444; }
 
-  .btn-copy {
-    background: var(--surface2);
-    color: var(--green);
-    border: 0.5px solid rgba(85,255,85,0.2);
+  .status { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .status.ok { color: #5a5; }
+  .status.err { color: var(--accent); }
+
+  .fevertime-note {
+    width: 100%; max-width: 860px;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 28px;
+    display: flex; flex-direction: column; gap: 5px;
   }
-  .btn-copy:hover { background: rgba(85,255,85,0.08); }
 
-  .status {
-    font-size: 11px; color: var(--muted);
-    margin-left: auto;
-  }
-  .status.ok { color: var(--green); }
-  .status.err { color: var(--accent2); }
-
-  .section-title {
-    font-size: 11px; color: var(--muted);
+  .fevertime-note .note-label {
+    font-size: 10px; color: var(--accent);
     text-transform: uppercase; letter-spacing: 0.08em;
-    font-weight: 600; margin-bottom: 10px;
+    margin-bottom: 2px;
+  }
+
+  .fevertime-note code {
+    font-size: 11px; color: var(--muted);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+  }
+
+  .fevertime-note .arrow { color: var(--accent); margin: 0 6px; }
+  .fevertime-note .result { color: var(--accent); }
+
+  .palette-label {
+    width: 100%; max-width: 860px;
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 8px;
   }
 
   .palette {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-bottom: 24px;
+    width: 100%; max-width: 860px;
+    display: flex; flex-wrap: wrap; gap: 5px;
   }
 
-  .color-chip {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--surface2);
-    border: 0.5px solid var(--border);
-    border-radius: 99px;
-    padding: 4px 10px; font-size: 11px;
-    transition: border-color 0.15s;
-  }
-  .color-chip:hover { border-color: var(--accent); }
-  .swatch { width: 10px; height: 10px; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-
-  .special-box {
-    background: var(--surface);
-    border: 0.5px solid rgba(255,170,0,0.3);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .special-title {
-    font-size: 11px; color: var(--accent); font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 6px;
-  }
-
-  .special-rule {
-    font-size: 11px; color: var(--muted); padding: 8px 10px;
-    background: var(--surface2);
-    border-radius: 5px; margin-bottom: 6px;
-    border-left: 2px solid var(--accent);
-    word-break: break-all; line-height: 1.5;
-  }
-  .special-rule:last-child { margin-bottom: 0; }
-  .arrow { color: var(--accent); font-weight: 700; margin: 0 4px; }
-
-  footer {
-    width: 100%; max-width: 1000px;
-    padding: 1.5rem 2rem;
-    border-top: 0.5px solid var(--border);
+  .chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
     font-size: 11px; color: var(--muted);
-    display: flex; align-items: center; justify-content: space-between;
-    position: relative; z-index: 1;
+    font-family: 'Courier New', monospace;
   }
 
-  @media (max-width: 640px) {
+  .swatch {
+    width: 9px; height: 9px; border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
     .editor-grid { grid-template-columns: 1fr; }
-    .logo { font-size: 16px; }
   }
 </style>
 </head>
 <body>
-<div class="noise"></div>
 
-<header>
-  <div class="logo">
-    <div class="logo-icon">⛏</div>
-    MC <span>Color</span> Converter
+<div class="top">
+  <h1>FeverConverter</h1>
+</div>
+
+<div class="editor-grid">
+  <div class="panel">
+    <div class="panel-label">Входной текст</div>
+    <textarea id="inp" placeholder="Вставьте конфиг с &#rrggbb кодами..."></textarea>
   </div>
-  <div class="tagline">&#hex; → &amp;N · Minecraft color codes</div>
-</header>
-
-<main>
-  <div class="badge">
-    <div class="dot"></div>
-    Конвертер HEX → Стандартные цвета Minecraft
+  <div class="panel">
+    <div class="panel-label">Результат</div>
+    <textarea id="out" readonly placeholder="Результат появится здесь..."></textarea>
   </div>
+</div>
 
-  <div class="special-box">
-    <div class="special-title">⚡ Авто-замена шаблонов FeverTime</div>
-    <div class="special-rule">
-      <code>&amp;r&amp;#ff6600F&amp;r&amp;#ff5100u...&amp;r&amp;#ff6600e&amp;r</code>
-      <span class="arrow">→</span>
-      <code style="color:#ffaa00">&amp;6FeverTime.su</code>
-    </div>
-    <div class="special-rule">
-      <code>&amp;r&amp;#ff0000F&amp;r&amp;#ff1400u...&amp;r&amp;#ff0000e&amp;r</code>
-      <span class="arrow">→</span>
-      <code style="color:#ffaa00">&amp;6FeverTime.su</code>
-    </div>
-  </div>
+<div class="controls">
+  <button class="btn-run" onclick="convert()">Конвертировать</button>
+  <button class="btn-copy" onclick="copyOut()">Копировать</button>
+  <button class="btn-clear" onclick="clearAll()">Очистить</button>
+  <span class="status" id="status"></span>
+</div>
 
-  <div class="editor-grid">
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-label">Входной текст</span>
-        <div class="panel-dot dot-in"></div>
-      </div>
-      <textarea id="inp" placeholder="Вставьте YAML / конфиг с &#rrggbb; кодами..."></textarea>
-    </div>
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-label">Результат</span>
-        <div class="panel-dot dot-out"></div>
-      </div>
-      <textarea id="out" readonly placeholder="Результат появится здесь..."></textarea>
-    </div>
-  </div>
 
-  <div class="controls">
-    <button class="btn btn-primary" onclick="convert()">▶ Конвертировать</button>
-    <button class="btn btn-copy" onclick="copyOut()">⎘ Копировать</button>
-    <button class="btn btn-ghost" onclick="clearAll()">✕ Очистить</button>
-    <span class="status" id="status"></span>
-  </div>
 
-  <div class="section-title">Палитра цветов Minecraft</div>
-  <div class="palette" id="palette"></div>
-</main>
+<script>
+const MC_COLORS = [
+  { code: '0', name: 'black',        hex: '#000000' },
+  { code: '1', name: 'dark_blue',    hex: '#0000AA' },
+  { code: '2', name: 'dark_green',   hex: '#00AA00' },
+  { code: '3', name: 'dark_aqua',    hex: '#00AAAA' },
+  { code: '4', name: 'dark_red',     hex: '#AA0000' },
+  { code: '5', name: 'dark_purple',  hex: '#AA00AA' },
+  { code: '6', name: 'gold',         hex: '#FFAA00' },
+  { code: '7', name: 'gray',         hex: '#AAAAAA' },
+  { code: '8', name: 'dark_gray',    hex: '#555555' },
+  { code: '9', name: 'blue',         hex: '#5555FF' },
+  { code: 'a', name: 'green',        hex: '#55FF55' },
+  { code: 'b', name: 'aqua',         hex: '#55FFFF' },
+  { code: 'c', name: 'red',          hex: '#FF5555' },
+  { code: 'd', name: 'light_purple', hex: '#FF55FF' },
+  { code: 'e', name: 'yellow',       hex: '#FFFF55' },
+  { code: 'f', name: 'white',        hex: '#FFFFFF' },
+];
 
-<footer>
-  <span>HEX ближайший цвет по RGB-расстоянию</span>
-  <span>16 цветов Minecraft</span>
-</footer>
+const FEVERTIME_PATTERNS = [
+  '&r&#ff6600F&r&#ff5100u&r&#ff3d00n&r&#ff2900T&r&#ff1500i&r&#ff1500m&r&#ff2900e&r&#ff3d00.&r&#ff5100m&r&#ff6600e&r',
+  '&r&#ff0000F&r&#ff1400u&r&#ff2800n&r&#ff3c00T&r&#ff5000i&r&#ff5000m&r&#ff3c00e&r&#ff2800.&r&#ff1400m&r&#ff0000e&r',
+];
 
-<script src="index.js"></script>
+const FEVERTIME_REPLACEMENT = '&6FeverTime.su';
+
+function hexToRgb(hex) {
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+}
+
+function colorDistance(a, b) {
+  return Math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2);
+}
+
+function closestMinecraftColor(hex) {
+  const rgb = hexToRgb(hex);
+  let best = MC_COLORS[0], bestDist = Infinity;
+  for (const c of MC_COLORS) {
+    const d = colorDistance(rgb, hexToRgb(c.hex));
+    if (d < bestDist) { bestDist = d; best = c; }
+  }
+  return best;
+}
+
+function applyFevertimePatterns(text) {
+  for (const p of FEVERTIME_PATTERNS)
+    while (text.includes(p)) text = text.replace(p, FEVERTIME_REPLACEMENT);
+  return text;
+}
+
+function convertHexColors(text) {
+  return text.replace(/&#([0-9a-fA-F]{6})/g, (_, hex) => '&' + closestMinecraftColor('#' + hex).code);
+}
+
+function removeResetCodes(text) {
+  return text.replace(/&r/g, '');
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.textContent = msg; el.className = 'status ' + (cls||'');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.textContent = ''; el.className = 'status'; }, 2200);
+}
+
+function convert() {
+  const input = document.getElementById('inp').value;
+  if (!input.trim()) { setStatus('Вставьте текст', 'err'); return; }
+  let r = applyFevertimePatterns(input);
+  r = convertHexColors(r);
+  r = removeResetCodes(r);
+  document.getElementById('out').value = r;
+  setStatus('Готово', 'ok');
+}
+
+function copyOut() {
+  const val = document.getElementById('out').value;
+  if (!val) { setStatus('Нечего копировать', 'err'); return; }
+  navigator.clipboard.writeText(val)
+    .then(() => setStatus('Скопировано', 'ok'))
+    .catch(() => { document.getElementById('out').select(); document.execCommand('copy'); setStatus('Скопировано', 'ok'); });
+}
+
+function clearAll() {
+  document.getElementById('inp').value = '';
+  document.getElementById('out').value = '';
+  const el = document.getElementById('status'); el.textContent = ''; el.className = 'status';
+}
+
+
+</script>
 </body>
 </html>
