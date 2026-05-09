@@ -87,33 +87,35 @@
 </div>
 
 <script>
-// Minecraft палитра (приближённая)
+// ===== Minecraft palette =====
 const palette = [
   { code: "&0", r: 0, g: 0, b: 0 },
-  { code: "&4", r: 170, g: 0,  b: 0 },
+  { code: "&4", r: 170, g: 0, b: 0 },
   { code: "&c", r: 255, g: 85, b: 85 },
-  { code: "&6", r: 255, g: 170,b: 0 },
-  { code: "&e", r: 255, g: 255,b: 85 },
+  { code: "&6", r: 255, g: 170, b: 0 },
+  { code: "&e", r: 255, g: 255, b: 85 },
   { code: "&2", r: 0, g: 170, b: 0 },
-  { code: "&a", r: 85, g: 255,b: 85 },
-  { code: "&b", r: 85, g: 255,b: 255 },
+  { code: "&a", r: 85, g: 255, b: 85 },
+  { code: "&b", r: 85, g: 255, b: 255 },
   { code: "&3", r: 0, g: 170, b: 170 },
   { code: "&9", r: 85, g: 85, b: 255 },
-  { code: "&1", r: 0, g: 0,  b: 170 },
+  { code: "&1", r: 0, g: 0, b: 170 },
   { code: "&d", r: 255, g: 85, b: 255 },
-  { code: "&5", r: 170, g: 0,  b: 170 },
-  { code: "&f", r: 255, g: 255,b: 255 },
+  { code: "&5", r: 170, g: 0, b: 170 },
+  { code: "&f", r: 255, g: 255, b: 255 }
 ];
 
+// ===== HEX to RGB =====
 function hexToRgb(hex) {
   hex = hex.replace("#", "");
   return {
-    r: parseInt(hex.substring(0,2), 16),
-    g: parseInt(hex.substring(2,4), 16),
-    b: parseInt(hex.substring(4,6), 16)
+    r: parseInt(hex.substring(0, 2), 16),
+    g: parseInt(hex.substring(2, 4), 16),
+    b: parseInt(hex.substring(4, 6), 16)
   };
 }
 
+// ===== closest Minecraft color =====
 function closestColor(r, g, b) {
   let best = palette[0];
   let bestDist = 999999;
@@ -132,6 +134,7 @@ function closestColor(r, g, b) {
   return best.code;
 }
 
+// ===== HEX converter =====
 function convertHex(text) {
   return text.replace(/&#([0-9a-fA-F]{6})/g, (m, hex) => {
     let rgb = hexToRgb(hex);
@@ -139,23 +142,53 @@ function convertHex(text) {
   });
 }
 
+// ===== auto replace FunTime =====
 function autoReplace(text) {
   return text.replace(/FunTime/gi, "FeverTime");
 }
 
+// ===== detect exact gradient patterns =====
+function detectFunTimeGradient(text) {
+  const cleaned = text.replace(/&r/g, "");
+
+  const patterns = [
+    "&#ff0000F&#ff1400u&#ff2800n&#ff3c00T&#ff5000i&#ff5000m&#ff3c00e&#ff2800.&#ff1400m&#ff0000e",
+    "&#ff6600F&#ff5100u&#ff3d00n&#ff2900T&#ff1500i&#ff1500m&#ff2900e&#ff3d00.&#ff5100m&#ff6600e"
+  ];
+
+  for (let p of patterns) {
+    if (cleaned.includes(p)) {
+      return "&6FeverTime.su";
+    }
+  }
+
+  return null;
+}
+
+// ===== main convert =====
 function convert() {
   let input = document.getElementById("input").value;
 
+  // 1. check special gradient
+  let detected = detectFunTimeGradient(input);
+  if (detected) {
+    document.getElementById("output").innerText = detected;
+    return;
+  }
+
+  // 2. HEX → MC colors
   let result = convertHex(input);
+
+  // 3. auto replace names
   result = autoReplace(result);
 
   document.getElementById("output").innerText = result.trim();
 }
 
+// ===== copy result =====
 function copyText() {
-  navigator.clipboard.writeText(
-    document.getElementById("output").innerText
-  );
+  const text = document.getElementById("output").innerText;
+  navigator.clipboard.writeText(text);
 }
 </script>
 
