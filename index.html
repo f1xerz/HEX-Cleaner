@@ -2,79 +2,56 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>HEX Minecraft Converter</title>
+<title>Gradient Converter</title>
 <style>
   body {
-    background: #0f0f0f;
-    color: white;
+    background: #111;
+    color: #fff;
     font-family: Arial;
     padding: 20px;
   }
-
   textarea {
     width: 100%;
-    height: 180px;
-    background: #1c1c1c;
-    color: #00ff88;
+    height: 200px;
+    background: #222;
+    color: #0f0;
     border: none;
     padding: 10px;
     margin-bottom: 10px;
-    font-family: monospace;
   }
-
   button {
     padding: 10px 15px;
     cursor: pointer;
-    margin-right: 10px;
-  }
-
-  .box {
-    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 
-<h2>HEX → Minecraft Converter</h2>
+<h2>HEX Gradient → Minecraft Color</h2>
 
-<textarea id="input" placeholder="Вставь текст с HEX (&#ff0000...)"></textarea>
+<textarea id="input" placeholder="Вставь текст с HEX градиентом..."></textarea>
 
 <button onclick="convert()">Конвертировать</button>
-<button onclick="copyText()">Копировать</button>
 
-<div class="box">
 <h3>Результат:</h3>
 <textarea id="output"></textarea>
-</div>
 
 <script>
-// HEX → Minecraft (&r&#xxxxxx...)
-function convertHex(text) {
-  return text.replace(/&#([0-9a-fA-F]{6})(.)/g, (m, hex, char) => {
-    return `&r&#${hex}${char}`;
-  });
-}
-
-// автозамена FunTime → FeverTime
-function autoReplace(text) {
-  return text.replace(/FunTime/gi, "FeverTime");
-}
-
 function convert() {
   let input = document.getElementById("input").value;
 
-  let result = convertHex(input);
+  // FunTime градиент (основной шаблон поиска)
+  const funTimePattern = /&r&#ff0000F&r&#ff1400u&r&#ff2800n&r&#ff3c00T&r&#ff5000i&r&#ff5000m&r&#ff3c00e&r&#ff2800\.&r&#ff1400m&r&#ff0000e&r/gi;
 
-  // автофикс названия сервера
-  result = autoReplace(result);
+  // альтернативный градиент
+  const funTimePattern2 = /&r&#ff6600F&r&#ff5100u&r&#ff3d00n&r&#ff2900T&r&#ff1500i&r&#ff1500m&r&#ff2900e&r&#ff3d00\.&r&#ff5100m&r&#ff6600e&r/gi;
 
-  document.getElementById("output").value = result;
-}
+  // замена
+  let output = input
+    .replace(funTimePattern, "&6FeverTime.su")
+    .replace(funTimePattern2, "&6FeverTime.su");
 
-function copyText() {
-  let out = document.getElementById("output");
-  out.select();
-  document.execCommand("copy");
+  document.getElementById("output").value = output;
 }
 </script>
 
