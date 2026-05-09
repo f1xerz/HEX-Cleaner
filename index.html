@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FeverConverter</title>
+<title>MC Color Converter</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
@@ -244,6 +244,25 @@ function removeResetCodes(text) {
   return text.replace(/&r/g, '');
 }
 
+// Reorders sequences of & codes so &l always comes last,
+// colour code sits right before the text it colours.
+// e.g. '&l&2Текст' → '&2&lТекст'
+function reorderCodes(text) {
+  return text.replace(/((?:&[0-9a-flo-uA-FLO-U])+)([^&]*)/g, (match, codes, content) => {
+    const codeList = [];
+    const re = /&([0-9a-flo-uA-FLO-U])/g;
+    let m;
+    while ((m = re.exec(codes)) !== null) codeList.push(m[1]);
+
+    const lCodes   = codeList.filter(c => c.toLowerCase() === 'l');
+    const otherFmt = codeList.filter(c => /^[nnoumkNOMUK]$/.test(c) && c.toLowerCase() !== 'l');
+    const colours  = codeList.filter(c => /^[0-9a-fA-F]$/.test(c));
+
+    const ordered = [...otherFmt, ...colours, ...lCodes];
+    return ordered.map(c => '&' + c).join('') + content;
+  });
+}
+
 function setStatus(msg, cls) {
   const el = document.getElementById('status');
   el.textContent = msg; el.className = 'status ' + (cls||'');
@@ -257,6 +276,7 @@ function convert() {
   let r = applyFevertimePatterns(input);
   r = convertHexColors(r);
   r = removeResetCodes(r);
+  r = reorderCodes(r);
   document.getElementById('out').value = r;
   setStatus('Готово', 'ok');
 }
