@@ -87,12 +87,56 @@
 </div>
 
 <script>
+// Minecraft палитра (приближённая)
+const palette = [
+  { code: "&0", r: 0, g: 0, b: 0 },
+  { code: "&4", r: 170, g: 0,  b: 0 },
+  { code: "&c", r: 255, g: 85, b: 85 },
+  { code: "&6", r: 255, g: 170,b: 0 },
+  { code: "&e", r: 255, g: 255,b: 85 },
+  { code: "&2", r: 0, g: 170, b: 0 },
+  { code: "&a", r: 85, g: 255,b: 85 },
+  { code: "&b", r: 85, g: 255,b: 255 },
+  { code: "&3", r: 0, g: 170, b: 170 },
+  { code: "&9", r: 85, g: 85, b: 255 },
+  { code: "&1", r: 0, g: 0,  b: 170 },
+  { code: "&d", r: 255, g: 85, b: 255 },
+  { code: "&5", r: 170, g: 0,  b: 170 },
+  { code: "&f", r: 255, g: 255,b: 255 },
+];
 
-// удаление HEX и r
-function cleanHex(text) {
-  return text
-    .replace(/&r/g, "")
-    .replace(/&#[0-9a-fA-F]{6}/g, "&f"); // вместо удаления → белый цвет
+function hexToRgb(hex) {
+  hex = hex.replace("#", "");
+  return {
+    r: parseInt(hex.substring(0,2), 16),
+    g: parseInt(hex.substring(2,4), 16),
+    b: parseInt(hex.substring(4,6), 16)
+  };
+}
+
+function closestColor(r, g, b) {
+  let best = palette[0];
+  let bestDist = 999999;
+
+  for (let c of palette) {
+    let dist =
+      Math.abs(r - c.r) +
+      Math.abs(g - c.g) +
+      Math.abs(b - c.b);
+
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = c;
+    }
+  }
+  return best.code;
+}
+
+function convertHex(text) {
+  return text.replace(/&#([0-9a-fA-F]{6})/g, (m, hex) => {
+    let rgb = hexToRgb(hex);
+    return closestColor(rgb.r, rgb.g, rgb.b);
+  });
 }
 
 function autoReplace(text) {
@@ -102,17 +146,17 @@ function autoReplace(text) {
 function convert() {
   let input = document.getElementById("input").value;
 
-  let result = cleanHex(input);
+  let result = convertHex(input);
   result = autoReplace(result);
 
   document.getElementById("output").innerText = result.trim();
 }
-// копирование
-function copyText() {
-  let text = document.getElementById("output").innerText;
-  navigator.clipboard.writeText(text);
-}
 
+function copyText() {
+  navigator.clipboard.writeText(
+    document.getElementById("output").innerText
+  );
+}
 </script>
 
 </body>
