@@ -1,115 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>MC HEX Cleaner</title>
+<title>Gradient Converter</title>
 <style>
   body {
-    margin: 0;
-    background: #0b0b0f;
-    color: white;
+    background: #111;
+    color: #fff;
     font-family: Arial;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
     padding: 20px;
-  }
-  .box {
-    width: 100%;
-    max-width: 800px;
-    background: #18181b;
-    padding: 20px;
-    border-radius: 12px;
   }
   textarea {
     width: 100%;
-    height: 180px;
-    background: black;
-    color: white;
-    border: 1px solid #333;
-    border-radius: 8px;
+    height: 200px;
+    background: #222;
+    color: #0f0;
+    border: none;
     padding: 10px;
-    font-size: 12px;
-    resize: vertical;
+    margin-bottom: 10px;
   }
   button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 0;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
+    padding: 10px 15px;
     cursor: pointer;
-    font-size: 14px;
-  }
-  button.copy {
-    background: #16a34a;
-  }
-  .label {
-    margin-top: 10px;
-    font-size: 12px;
-    opacity: 0.7;
   }
 </style>
 </head>
 <body>
 
-<div class="box">
-  <h2>MC HEX → Cleaner</h2>
+<h2>HEX Gradient → Minecraft Color</h2>
 
-  <textarea id="input" placeholder="Вставь YAML сюда..."></textarea>
+<textarea id="input" placeholder="Вставь текст с HEX градиентом..."></textarea>
 
-  <button onclick="convert()">Convert</button>
+<button onclick="convert()">Конвертировать</button>
 
-  <div class="label">Result:</div>
-  <textarea id="out" readonly></textarea>
-
-  <button class="copy" onclick="copyText()">Copy result</button>
-</div>
+<h3>Результат:</h3>
+<textarea id="output"></textarea>
 
 <script>
-function extractText(input) {
-  let result = "";
-
-  // вытаскиваем символы после HEX
-  input.replace(/&#[0-9a-fA-F]{6}(.?)/g, (m, ch) => {
-    result += ch;
-  });
-
-  // убираем &r
-  result = result.replace(/&r/g, "");
-
-  return result;
-}
-
-function convert(input) {
-  const funTime1 = "&r&#ff0000F&r&#ff1400u&r&#ff2800n&r&#ff3c00T&r&#ff5000i&r&#ff5000m&r&#ff3c00e&r&#ff2800.&r&#ff1400m&r&#ff0000e&r";
-  const funTime2 = "&r&#ff6600F&r&#ff5100u&r&#ff3d00n&r&#ff2900T&r&#ff1500i&r&#ff1500m&r&#ff2900e&r&#ff3d00.&r&#ff5100m&r&#ff6600e&r";
-
-  if (input.trim() === funTime1 || input.trim() === funTime2) {
-    return "&6FeverTime.su";
-  }
-
-  return input; // если не совпало — ничего не трогаем
-}
-
 function convert() {
-  let text = document.getElementById("input").value;
+  let input = document.getElementById("input").value;
 
-  let cleanText = extractText(text);
+  // FunTime градиент (основной шаблон поиска)
+  const funTimePattern = /&r&#ff0000F&r&#ff1400u&r&#ff2800n&r&#ff3c00T&r&#ff5000i&r&#ff5000m&r&#ff3c00e&r&#ff2800\.&r&#ff1400m&r&#ff0000e&r/gi;
 
-  // ВСЕГДА один цвет (как в примере пользователя)
-  let final = "&6" + cleanText;
+  // альтернативный градиент
+  const funTimePattern2 = /&r&#ff6600F&r&#ff5100u&r&#ff3d00n&r&#ff2900T&r&#ff1500i&r&#ff1500m&r&#ff2900e&r&#ff3d00\.&r&#ff5100m&r&#ff6600e&r/gi;
 
-  document.getElementById("out").value = final;
-}
+  // замена
+  let output = input
+    .replace(funTimePattern, "&6FeverTime.su")
+    .replace(funTimePattern2, "&6FeverTime.su");
 
-function copyText() {
-  const out = document.getElementById("out");
-  out.select();
-  document.execCommand("copy");
+  document.getElementById("output").value = output;
 }
 </script>
 
