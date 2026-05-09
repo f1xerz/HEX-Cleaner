@@ -1,196 +1,301 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>HEX Converter</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minecraft Color Converter</title>
 <style>
-  body {
-    margin: 0;
-    background: #0b0b0f;
-    color: white;
-    font-family: Arial;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d0f12;
+    --surface: #13161b;
+    --surface2: #1a1e25;
+    --border: #252932;
+    --accent: #ffaa00;
+    --accent2: #ff5555;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --green: #55ff55;
+    --radius: 8px;
   }
 
-  .box {
-    width: 420px;
-    background: #18181b;
-    padding: 20px;
-    border-radius: 12px;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px;
+  }
+
+  header {
+    width: 100%; max-width: 1000px;
+    padding: 2.5rem 2rem 0;
+    position: relative; z-index: 1;
+  }
+
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 6px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .tagline {
+    font-size: 11px; color: var(--muted); margin-top: 6px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  main {
+    width: 100%; max-width: 1000px;
+    padding: 2rem;
+    position: relative; z-index: 1;
+    flex: 1;
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,170,0,0.08);
+    border: 0.5px solid rgba(255,170,0,0.25);
+    color: var(--accent);
+    font-size: 11px; padding: 4px 10px; border-radius: 99px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .editor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface2);
+  }
+
+  .panel-label {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-in { background: #ff5555; }
+  .dot-out { background: #55ff55; }
 
   textarea {
-    width: 100%;
-    height: 140px;
-    padding: 10px;
-    margin: 10px 0;
-    background: black;
-    color: white;
-    border: 1px solid #333;
-    border-radius: 8px;
-    resize: none;
-    font-family: monospace;
-    font-size: 12px;
+    width: 100%; height: 280px; resize: vertical;
+    background: transparent;
+    color: var(--text);
+    border: none; outline: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.7;
+    padding: 14px;
   }
 
-  button {
-    width: 100%;
-    padding: 10px;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+  textarea::placeholder { color: var(--muted); }
+  textarea[readonly] { color: #a8ffa8; cursor: default; }
+
+  .controls {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 20px;
   }
 
-  .gen {
-    background: #2563eb;
-    color: white;
+  .btn {
+    padding: 9px 20px; border-radius: var(--radius);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none;
+    transition: all 0.15s; letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 7px;
   }
 
-  .copy {
-    background: #16a34a;
-    margin-top: 10px;
-    color: white;
+  .btn-primary {
+    background: var(--accent); color: #000;
+  }
+  .btn-primary:hover { background: #ffbb22; transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 0.5px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-copy {
+    background: var(--surface2);
+    color: var(--green);
+    border: 0.5px solid rgba(85,255,85,0.2);
+  }
+  .btn-copy:hover { background: rgba(85,255,85,0.08); }
+
+  .status {
+    font-size: 11px; color: var(--muted);
+    margin-left: auto;
+  }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--accent2); }
+
+  .section-title {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; margin-bottom: 10px;
   }
 
-  .result {
-    word-break: break-word;
-    font-size: 13px;
-    background: black;
-    padding: 10px;
-    border-radius: 8px;
-    margin-top: 10px;
-    min-height: 80px;
-    white-space: pre-wrap;
+  .palette {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .color-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 10px; font-size: 11px;
+    transition: border-color 0.15s;
+  }
+  .color-chip:hover { border-color: var(--accent); }
+  .swatch { width: 10px; height: 10px; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+
+  .special-box {
+    background: var(--surface);
+    border: 0.5px solid rgba(255,170,0,0.3);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .special-title {
+    font-size: 11px; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .special-rule {
+    font-size: 11px; color: var(--muted); padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 5px; margin-bottom: 6px;
+    border-left: 2px solid var(--accent);
+    word-break: break-all; line-height: 1.5;
+  }
+  .special-rule:last-child { margin-bottom: 0; }
+  .arrow { color: var(--accent); font-weight: 700; margin: 0 4px; }
+
+  footer {
+    width: 100%; max-width: 1000px;
+    padding: 1.5rem 2rem;
+    border-top: 0.5px solid var(--border);
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+
+  @media (max-width: 640px) {
+    .editor-grid { grid-template-columns: 1fr; }
+    .logo { font-size: 16px; }
   }
 </style>
 </head>
-
 <body>
+<div class="noise"></div>
 
-<div class="box">
+<header>
+  <div class="logo">
+    <div class="logo-icon">⛏</div>
+    MC <span>Color</span> Converter
+  </div>
+  <div class="tagline">&#hex; → &amp;N · Minecraft color codes</div>
+</header>
 
-  <h3>HEX → Minecraft Converter</h3>
+<main>
+  <div class="badge">
+    <div class="dot"></div>
+    Конвертер HEX → Стандартные цвета Minecraft
+  </div>
 
-  <textarea id="input" placeholder="Вставь HEX или градиент текст..."></textarea>
+  <div class="special-box">
+    <div class="special-title">⚡ Авто-замена шаблонов FeverTime</div>
+    <div class="special-rule">
+      <code>&amp;r&amp;#ff6600F&amp;r&amp;#ff5100u...&amp;r&amp;#ff6600e&amp;r</code>
+      <span class="arrow">→</span>
+      <code style="color:#ffaa00">&amp;6FeverTime.su</code>
+    </div>
+    <div class="special-rule">
+      <code>&amp;r&amp;#ff0000F&amp;r&amp;#ff1400u...&amp;r&amp;#ff0000e&amp;r</code>
+      <span class="arrow">→</span>
+      <code style="color:#ffaa00">&amp;6FeverTime.su</code>
+    </div>
+  </div>
 
-  <button class="gen" onclick="convert()">Конвертировать</button>
+  <div class="editor-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Входной текст</span>
+        <div class="panel-dot dot-in"></div>
+      </div>
+      <textarea id="inp" placeholder="Вставьте YAML / конфиг с &#rrggbb; кодами..."></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Результат</span>
+        <div class="panel-dot dot-out"></div>
+      </div>
+      <textarea id="out" readonly placeholder="Результат появится здесь..."></textarea>
+    </div>
+  </div>
 
-  <div class="result" id="output"></div>
+  <div class="controls">
+    <button class="btn btn-primary" onclick="convert()">▶ Конвертировать</button>
+    <button class="btn btn-copy" onclick="copyOut()">⎘ Копировать</button>
+    <button class="btn btn-ghost" onclick="clearAll()">✕ Очистить</button>
+    <span class="status" id="status"></span>
+  </div>
 
-  <button class="copy" onclick="copyText()">Копировать</button>
+  <div class="section-title">Палитра цветов Minecraft</div>
+  <div class="palette" id="palette"></div>
+</main>
 
-</div>
+<footer>
+  <span>HEX ближайший цвет по RGB-расстоянию</span>
+  <span>16 цветов Minecraft</span>
+</footer>
 
-<script>
-// ===== Minecraft palette =====
-const palette = [
-  { code: "&0", r: 0, g: 0, b: 0 },
-  { code: "&4", r: 170, g: 0, b: 0 },
-  { code: "&c", r: 255, g: 85, b: 85 },
-  { code: "&6", r: 255, g: 170, b: 0 },
-  { code: "&e", r: 255, g: 255, b: 85 },
-  { code: "&2", r: 0, g: 170, b: 0 },
-  { code: "&a", r: 85, g: 255, b: 85 },
-  { code: "&b", r: 85, g: 255, b: 255 },
-  { code: "&3", r: 0, g: 170, b: 170 },
-  { code: "&9", r: 85, g: 85, b: 255 },
-  { code: "&1", r: 0, g: 0, b: 170 },
-  { code: "&d", r: 255, g: 85, b: 255 },
-  { code: "&5", r: 170, g: 0, b: 170 },
-  { code: "&f", r: 255, g: 255, b: 255 }
-];
-
-// ===== HEX to RGB =====
-function hexToRgb(hex) {
-  hex = hex.replace("#", "");
-  return {
-    r: parseInt(hex.substring(0, 2), 16),
-    g: parseInt(hex.substring(2, 4), 16),
-    b: parseInt(hex.substring(4, 6), 16)
-  };
-}
-
-// ===== closest Minecraft color =====
-function closestColor(r, g, b) {
-  let best = palette[0];
-  let bestDist = 999999;
-
-  for (let c of palette) {
-    let dist =
-      Math.abs(r - c.r) +
-      Math.abs(g - c.g) +
-      Math.abs(b - c.b);
-
-    if (dist < bestDist) {
-      bestDist = dist;
-      best = c;
-    }
-  }
-  return best.code;
-}
-
-// ===== HEX converter =====
-function convertHex(text) {
-  return text.replace(/&#([0-9a-fA-F]{6})/g, (m, hex) => {
-    let rgb = hexToRgb(hex);
-    return closestColor(rgb.r, rgb.g, rgb.b);
-  });
-}
-
-// ===== auto replace FunTime =====
-function autoReplace(text) {
-  return text.replace(/FunTime/gi, "FeverTime");
-}
-
-// ===== detect exact gradient patterns =====
-function detectFunTimeGradient(text) {
-  const cleaned = text.replace(/&r/g, "");
-
-  const patterns = [
-    "&#ff0000F&#ff1400u&#ff2800n&#ff3c00T&#ff5000i&#ff5000m&#ff3c00e&#ff2800.&#ff1400m&#ff0000e",
-    "&#ff6600F&#ff5100u&#ff3d00n&#ff2900T&#ff1500i&#ff1500m&#ff2900e&#ff3d00.&#ff5100m&#ff6600e"
-  ];
-
-  for (let p of patterns) {
-    if (cleaned.includes(p)) {
-      return "&6FeverTime.su";
-    }
-  }
-
-  return null;
-}
-
-// ===== main convert =====
-function convert() {
-  let input = document.getElementById("input").value;
-
-  // 1. check special gradient
-  let detected = detectFunTimeGradient(input);
-  if (detected) {
-    document.getElementById("output").innerText = detected;
-    return;
-  }
-
-  // 2. HEX → MC colors
-  let result = convertHex(input);
-
-  // 3. auto replace names
-  result = autoReplace(result);
-
-  document.getElementById("output").innerText = result.trim();
-}
-
-// ===== copy result =====
-function copyText() {
-  const text = document.getElementById("output").innerText;
-  navigator.clipboard.writeText(text);
-}
-</script>
-
+<script src="index.js"></script>
 </body>
 </html>
