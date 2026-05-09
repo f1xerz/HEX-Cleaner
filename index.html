@@ -1,81 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>MC HEX Cleaner</title>
-<style>
-  body {
-    margin: 0;
-    background: #0b0b0f;
-    color: white;
-    font-family: Arial;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  .box {
-    width: 600px;
-    background: #18181b;
-    padding: 20px;
-    border-radius: 12px;
-  }
-  textarea {
-    width: 100%;
-    height: 200px;
-    background: black;
-    color: white;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 12px;
-  }
-  button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 0;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    cursor: pointer;
-  }
-  .out {
-    white-space: pre-wrap;
-    margin-top: 10px;
-    background: black;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 12px;
-  }
-</style>
-</head>
-<body>
-
-<div class="box">
-  <h2>MC HEX → Vanilla Color Cleaner</h2>
-
-  <textarea id="input" placeholder="Вставь YAML сюда..."></textarea>
-
-  <button onclick="convert()">Convert</button>
-
-  <div class="out" id="out"></div>
-</div>
-
 <script>
+const colors = [
+  {code: "&0", rgb: [0,0,0]},
+  {code: "&1", rgb: [0,0,170]},
+  {code: "&2", rgb: [0,170,0]},
+  {code: "&3", rgb: [0,170,170]},
+  {code: "&4", rgb: [170,0,0]},
+  {code: "&5", rgb: [170,0,170]},
+  {code: "&6", rgb: [255,170,0]},
+  {code: "&7", rgb: [170,170,170]},
+  {code: "&8", rgb: [85,85,85]},
+  {code: "&9", rgb: [85,85,255]},
+  {code: "&a", rgb: [85,255,85]},
+  {code: "&b", rgb: [85,255,255]},
+  {code: "&c", rgb: [255,85,85]},
+  {code: "&d", rgb: [255,85,255]},
+  {code: "&e", rgb: [255,255,85]},
+  {code: "&f", rgb: [255,255,255]},
+];
+
+function hexToRgb(hex) {
+  return [
+    parseInt(hex.substr(0,2),16),
+    parseInt(hex.substr(2,2),16),
+    parseInt(hex.substr(4,2),16)
+  ];
+}
+
+function closestColor(r,g,b) {
+  let best = colors[0];
+  let bestDist = 999999;
+
+  for (let c of colors) {
+    const dr = r - c.rgb[0];
+    const dg = g - c.rgb[1];
+    const db = b - c.rgb[2];
+    const dist = dr*dr + dg*dg + db*db;
+
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = c;
+    }
+  }
+
+  return best.code;
+}
+
 function convert() {
   let text = document.getElementById("input").value;
 
-  // превращаем &#RRGGBB + символ → просто символ
-  text = text.replace(/&#[0-9a-fA-F]{6}(.?)/g, "$1");
+  // заменяем HEX на &color + символ
+  text = text.replace(/&#([0-9a-fA-F]{6})(.)/g, (match, hex, char) => {
+    const [r,g,b] = hexToRgb(hex);
+    const color = closestColor(r,g,b);
+    return color + char;
+  });
 
-  // убираем &r (reset)
-  text = text.replace(/&r/g, "");
-
-  // вывод
   document.getElementById("out").textContent = text;
 }
 </script>
-
-</body>
-</html>
