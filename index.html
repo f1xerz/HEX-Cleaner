@@ -92,15 +92,13 @@
 function cleanHex(text) {
   return text
     .replace(/&r/g, "")
-    .replace(/&#[0-9a-fA-F]{6}/g, "");
+    .replace(/&#[0-9a-fA-F]{6}/g, "&f"); // вместо удаления → белый цвет
 }
 
-// авто замена названия
 function autoReplace(text) {
   return text.replace(/FunTime/gi, "FeverTime");
 }
 
-// основной конверт
 function convert() {
   let input = document.getElementById("input").value;
 
@@ -109,7 +107,6 @@ function convert() {
 
   document.getElementById("output").innerText = result.trim();
 }
-
 // копирование
 function copyText() {
   let text = document.getElementById("output").innerText;
